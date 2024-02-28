@@ -1,6 +1,7 @@
 # Author: Omkar Pathak
 
 import io
+import json
 import os
 import re
 import nltk
@@ -8,7 +9,7 @@ import pandas as pd
 import docx2txt
 from datetime import datetime
 from dateutil import relativedelta
-from . import constants as cs
+import constants as cs
 from pdfminer.converter import TextConverter
 from pdfminer.pdfinterp import PDFPageInterpreter
 from pdfminer.pdfinterp import PDFResourceManager
@@ -17,6 +18,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PDFSyntaxError
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+import json
 
 
 def extract_text_from_pdf(pdf_path):
@@ -130,6 +132,7 @@ def extract_text_from_docx(doc_path):
     try:
         temp = docx2txt.process(doc_path)
         text = [line.replace('\t', ' ') for line in temp.split('\n') if line]
+        print(' '.join(text))
         return ' '.join(text)
     except KeyError:
         return ' '
@@ -153,7 +156,8 @@ def extract_text_from_doc(doc_path):
         return ' '
 
 
-def extract_text(file_path, extension):
+# def extract_text(file_path, extension):
+def extract_text(file_path):
     '''
     Wrapper function to detect the file extension and call text
     extraction function accordingly
@@ -162,13 +166,26 @@ def extract_text(file_path, extension):
     :param extension: extension of file `file_name`
     '''
     text = ''
-    if extension == '.pdf':
-        for page in extract_text_from_pdf(file_path):
-            text += ' ' + page
-    elif extension == '.docx':
-        text = extract_text_from_docx(file_path)
-    elif extension == '.doc':
-        text = extract_text_from_doc(file_path)
+
+    # Если надо парсить тут, ща тестирую свои конвертеры
+    # if extension == '.pdf':
+    #     for page in extract_text_from_pdf(file_path):
+    #         text += ' ' + page
+    # elif extension == '.docx':
+    #     text = extract_text_from_docx(file_path)
+    # elif extension == '.doc':
+    #     text = extract_text_from_doc(file_path)
+
+    # уже готовый словарь (file_path - index):
+
+    with open("C:/Users/edelk/Gitflic/GitHub/ML-TalentMatch/resume_texts_without_lowercase.json", 'r', encoding="utf-8") as file:
+        data = json.load(file)
+        print(data[file_path])
+        text = data[file_path]['content']
+        text = [line.replace('\t', ' ') for line in text.split('\n') if line]
+        print(' '.join(text))
+        return ' '.join(text)
+
     return text
 
 

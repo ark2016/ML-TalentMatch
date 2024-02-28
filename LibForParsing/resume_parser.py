@@ -1,12 +1,11 @@
 # Author: Omkar Pathak
-
 import os
 import multiprocessing as mp
 import io
 import spacy
 import pprint
 from spacy.matcher import Matcher
-from . import utils
+import utils
 
 
 class ResumeParser(object):
@@ -23,7 +22,16 @@ class ResumeParser(object):
         self.__custom_regex = custom_regex
         self.__matcher = Matcher(nlp.vocab)
         self.__details = {
+            'resume_id': None,
             'name': None,
+            'last_name': None,
+            'middle_name': None,
+            'birth_date': None,
+            'birth_date_year_only': None,
+            "country": None,
+            "city": None,
+            "about": None,
+            "key_skills": None,
             'email': None,
             'mobile_number': None,
             'skills': None,
@@ -36,11 +44,12 @@ class ResumeParser(object):
             'total_experience': None,
         }
         self.__resume = resume
-        if not isinstance(self.__resume, io.BytesIO):
-            ext = os.path.splitext(self.__resume)[1].split('.')[1]
-        else:
-            ext = self.__resume.name.split('.')[1]
-        self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        # if not isinstance(self.__resume, io.BytesIO):
+        #     ext = os.path.splitext(self.__resume)[1].split('.')[1]
+        # else:
+        #     ext = self.__resume.name.split('.')[1]
+        # self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        self.__text_raw = utils.extract_text(self.__resume)
         self.join = ' '.join(self.__text_raw.split())
         self.__text = self.join
         self.__nlp = nlp(self.__text)
@@ -70,9 +79,14 @@ class ResumeParser(object):
 
         # extract name
         try:
-            self.__details['name'] = cust_ent['Name'][0]
+            temp = cust_ent['Name'][0].split()
+
+            self.__details['name'] = temp[0] if len(temp[0]) > 0 else None
+            self.__details['last_name'] = temp[1] if len(temp) > 1 and len(temp[1]) > 1 else None
+            self.__details['middle_name'] = temp[2] if len(temp) > 2 and len(temp[2]) > 1 else None
         except (IndexError, KeyError):
-            self.__details['name'] = name
+            self.name = name
+            self.__details['name'] = self.name
 
         # extract email
         self.__details['email'] = email
@@ -119,9 +133,9 @@ class ResumeParser(object):
                 self.__details['total_experience'] = 0
         except KeyError:
             self.__details['total_experience'] = 0
-        self.__details['no_of_pages'] = utils.get_number_of_pages(
-                                            self.__resume
-                                        )
+        #self.__details['no_of_pages'] = utils.get_number_of_pages(
+        #                                    self.__resume
+        #                                )
         return
 
 
@@ -131,22 +145,26 @@ def resume_result_wrapper(resume):
 
 
 if __name__ == '__main__':
-    pool = mp.Pool(mp.cpu_count())
-
-    resumes = []
-    data = []
-    for root, directories, filenames in os.walk('resumes/'):
-        for filename in filenames:
-            file = os.path.join(root, filename)
-            resumes.append(file)
-
-    results = [
-        pool.apply_async(
-            resume_result_wrapper,
-            args=(x,)
-        ) for x in resumes
-    ]
-
-    results = [p.get() for p in results]
-
-    pprint.pprint(results)
+    # pool = mp.Pool(mp.cpu_count())
+    #
+    # resumes = []
+    # data = []
+    # for root, directories, filenames in os.walk('resumes/'):
+    #     for filename in filenames:
+    #         file = os.path.join(root, filename)
+    #         resumes.append(file)
+    #
+    # results = [
+    #     pool.apply_async(
+    #         resume_result_wrapper,
+    #         args=(x,)
+    #     ) for x in resumes
+    # ]
+    #
+    # results = [p.get() for p in results]
+    #
+    # pprint.pprint(results)
+    data = ResumeParser(10).get_extracted_data()
+    for elem in data:
+        print(elem, ":", data[elem])
+    #print(data)
