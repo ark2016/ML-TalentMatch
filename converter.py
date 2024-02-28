@@ -9,21 +9,8 @@ import json
 countWordEducation = 0
 countWordExperience = 0
 countWordSkill = 0
-
 countFiles = 0
 
-def pdf_to_text(pdf_file_path):
-    try:
-        text = ""
-        with open(pdf_file_path, 'rb') as file:
-            reader = pdfplumber.PdfFileReader(file)
-            for page_num in range(reader.numPages):
-                page = reader.getPage(page_num)
-                text += page.extractText() + '\n'
-        return text
-    except Exception as e:
-        print(f"Ошибка при чтении файла: {e}")
-        return None
 def docx_to_text(file_path):
     global countFiles
     global countWordEducation
@@ -35,14 +22,14 @@ def docx_to_text(file_path):
             # Преобразование .docx файла в текст
             doc = Document(file_path)
             for paragraph in doc.paragraphs:
-                text += paragraph.text.replace("\t"," ").strip() + '\n'
+                text += paragraph.text.replace("\t"," ").strip() + ' \n '
         else:
             # Преобразование .pdf файла в текст
             with pdfplumber.open(file_path) as pdf:
                 for page in pdf.pages:
-                    text += page.extract_text() + '\n'
+                    text += page.extract_text() + ' \n '
 
-        text = text.lower()
+        #text = text.lower()
         if "education" in text or "образование" in text:
             countWordEducation += 1
         if "experience" in text or "опыт работы" in text:
@@ -103,7 +90,7 @@ if __name__ == "__main__":
         print("Кол-во слов experience встреченных хотя бы раз в файле: \n", countWordExperience)
         print("Кол-во слов skill встреченных хотя бы раз в файле: \n", countWordSkill)
 
-        with open('resume_texts.json', 'w', encoding='utf-8') as json_file:
+        with open('resume_texts_without_lowercase.json', 'w', encoding='utf-8') as json_file:
             json.dump(resume_texts, json_file, ensure_ascii=False, indent=4)
             print("JSON файл успешно сохранен.")
     else:
