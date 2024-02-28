@@ -1,0 +1,61 @@
+{
+  "resume": {
+      "resume_id": "",
+      "first_name": "",
+      "last_name": "",
+      "middle_name": "",
+      "birth_date": "",
+      "birth_date_year_only": "",
+      "country": "",
+      "city": "",
+      "about": "",
+      "key_skills": "",
+      "salary_expectations_amount": "",
+      "salary_expectations_currency": "",
+      "photo_path": "",
+      "gender": "",
+      "language": "",
+      "resume_name": "",
+      "source_link": "",
+      "contactItems": [
+        {
+          "resume_contact_item_id": "",
+          "value": "",
+          "comment": "",
+          "contact_type": ""
+        }
+      ],
+      "educationItems": [
+        {
+          "resume_education_item_id": "",
+          "year": "",
+          "organization": "",
+          "faculty": "",
+          "specialty": "",
+          "result": "",
+          "education_type": "",
+          "education_level": ""
+        }
+      ],
+      "experienceItems": [
+        {
+          "resume_experience_item_id": "",
+          "starts": "",
+          "ends": "",
+          "employer": "",
+          "city": "",
+          "url": "",
+          "position": "",
+          "description": "",
+          "order": ""
+        }
+      ],
+      "languageItems": [
+        {
+          "resume_language_item_id": "",
+          "language": "",
+          "language_level": ""
+        }
+      ]
+    }
+}
