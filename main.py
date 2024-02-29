@@ -114,6 +114,8 @@ def extract_contacts(file_path, json_data):
     return json.dumps(json_data, indent=4)
 
 
+
+
 # Список ключевых слов для блоков
 keywords = {
     "education": ["education", "учеба"],
@@ -151,7 +153,6 @@ print("Remaining Text: ", remaining_text)
 #     json.dump(resume_texts, json_file, ensure_ascii=False, indent=4)
 #     print("JSON файл успешно сохранен.")
 print(resume_text)
-
 #_____________________________________________________________________________________________________________________
 dicta = {
   "resume": {
@@ -215,8 +216,6 @@ dicta = {
     }
 }
 
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import pipeline
 
 pipe = pipeline("question-answering", model="Kiet/autotrain-resume_parser-1159242747")
 tokenizer = AutoTokenizer.from_pretrained("Kiet/autotrain-resume_parser-1159242747")
@@ -300,5 +299,7 @@ dicta['resume']['experienceItems'][0]["city"] = city
 position = pipe("position at work", resume_text )['answer']
 print("position: ", position)
 dicta['resume']['experienceItems'][0]["position"] = position
+
+dicta = extract_contacts(PATH_TO_FILE, dicta)
 
 print(dicta)
