@@ -1,9 +1,32 @@
-from pyresparser import ResumeParser
-
+#from pyresparser import ResumeParser
+import re
 
 
 def main():
-    data = ResumeParser("C:/Users/edelk/Gitflic/GitHub/ML-TalentMatch/resume/Akhundov Damat.pdf").get_extracted_data()
-    print(data, "ds")
+    # data = ResumeParser("C:/Users/edelk/Gitflic/GitHub/ML-TalentMatch/resume/Akhundov Damat.pdf").get_extracted_data()
+    # print(data, "ds")
 
+    pattern = r'^\+?\d(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?\d(?:[\(\)])?(?:[\\|/ -]?)?(?:[\(\)])?$'
+
+    # Пример использования:
+    test_strings = [
+        "adnwkdaw +12345678901 kawjndkjaw",
+        "12345678901",
+        "+123-456(789)01",
+        "123|456 789 01",
+        "123/456(78)901",
+        "+1 2 3 4 5 6 7 8 9 0 1",
+        "+1234-5678-901",
+        "+123456(78901)",
+        "+357 94 000 651",
+        "wadwa"
+    ]
+
+    for string in test_strings:
+        match = re.search(pattern, string)
+        print(match)
+        if match:
+            print(f"Строка '{match.group(0)}' соответствует регулярному выражению.")
+        else:
+            print(f"Строка '{string}' не соответствует регулярному выражению.")
 main()

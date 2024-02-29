@@ -83,7 +83,7 @@ class ResumeParser(object):
 
             self.__details['name'] = temp[0] if len(temp[0]) > 0 else None
             self.__details['last_name'] = temp[1] if len(temp) > 1 and len(temp[1]) > 1 else None
-            self.__details['middle_name'] = temp[2] if len(temp) > 2 and len(temp[2]) > 1 else None
+            self.__details['middle_name'] = temp[2] if len(temp) > 2 and len(temp[2]) > 1 and len(temp[2]) < 15 else None
         except (IndexError, KeyError):
             self.name = name
             self.__details['name'] = self.name
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # results = [p.get() for p in results]
     #
     # pprint.pprint(results)
-    data = ResumeParser(10).get_extracted_data()
+    data = ResumeParser(53).get_extracted_data()
     for elem in data:
         print(elem, ":", data[elem])
     #print(data)
