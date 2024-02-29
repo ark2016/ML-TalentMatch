@@ -6,6 +6,11 @@
 
 pip install -r requirements.txt
 
+И не забыть про виртуальное окружение
+
+python -m venv venv
+source venv/bin/activate
+
 ## Запуск
 
 запускать main.py
