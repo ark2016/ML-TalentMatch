@@ -1,33 +1,38 @@
+import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+from docx import Document
+import pdfplumber
 from langdetect import detect
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
+from transformers import pipeline
+import nltk
+from nltk.corpus import wordnet
+import pymorphy2
 
-# def file_to_text(file_path):
-#     try:
-#         text = ""
-#         if ".docx" in file_path:
-#             # Преобразование .docx файла в текст
-#             doc = Document(file_path)
-#             for paragraph in doc.paragraphs:
-#                 text += paragraph.text.replace("\t"," ").strip() + ' \n '
-#         else:е
-#             # Преобразование .pdf файла в текст
-#             with pdfplumber.open(file_path) as pdf:
-#                 for page in pdf.pages:
-#                     text += page.extract_text() + ' \n '
+PATH_TO_FILE = "resume/AHMAT SULEIMENOV.docx"
 
-#         #text = text.lower()
-#         work_with_text(text)
-#         return text
-#     except Exception as e:
-#         print(f"Ошибка при чтении файла: {e}")
-#         return None
+def file_to_text(file_path):
+    try:
+        text = ""
+        if ".docx" in file_path:
+            # Преобразование .docx файла в текст
+            doc = Document(file_path)
+            for paragraph in doc.paragraphs:
+                text += paragraph.text.replace("\t"," ").strip() + ' \n '
+        else:
+            # Преобразование .pdf файла в текст
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    text += page.extract_text() + ' \n '
 
-# def work_with_text(text):
-#     if "akhundov damat" in text:
-#         print(text)
+        #text = text.lower()
+        return text
+    except Exception as e:
+        print(f"Ошибка при чтении файла: {e}")
+        return None
 
 
 def split_resume_into_blocks(text, keywords):
@@ -72,6 +77,43 @@ def get_russian_synonyms(word):
     parsed_word = morph.parse(word)[0]
     return [parsed_word.normal_form] + [i.normal_form for i in parsed_word.lexeme]
 
+
+def extract_contacts(file_path, json_data):
+    contacts = {}
+    text = file_to_text(file_path)
+    email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    github_regex = r'(?:github\.io\s*|\s*(?:https?://)?(?:www\.)?github\.com/)(\S+)'
+    phone_regex = r'(?:(?:\+1\s*-?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4})|(?:(?:\+7\s*-?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2})|(?:(?:\+44\s*-?)?(?:\(\d{4}\)|\d{4})[\s.-]?\d{6})|(?:(?:\+33\s*-?)?(?:\(\d{1,2}\)|\d{1,2})[\s.-]?(?:\d{2}\s){4}\d{2})'
+    regex_linkedin = r'(?:https?://)?(?:www\.)?linkedin\.com/\S+'
+
+    emails = re.findall(email_regex, text)
+    if emails:
+        contacts['email'] = emails[0]
+
+    phones = re.findall(phone_regex, text)
+    if phones:
+        contacts['phone'] = phones[0]
+
+    github_usernames = re.findall(github_regex, text)
+    if github_usernames:
+        contacts['github'] = github_usernames[0]
+
+    linkedln_links = re.findall(regex_linkedin, text)
+    if linkedln_links:
+        contacts['linkedin'] = linkedln_links[0]
+
+    for key, value in contacts.items():
+        contact_item = {
+            "resume_contact_item_id": "",
+            "value": value,
+            "comment": "",
+            "contact_type": key
+        }
+        json_data["resume"]["contactItems"].append(contact_item)
+
+    return json.dumps(json_data, indent=4)
+
+
 # Список ключевых слов для блоков
 keywords = {
     "education": ["education", "учеба"],
@@ -97,8 +139,8 @@ for key, value in keywords.items():
 print(keywords)
 
 # file_path = "resume/AHMAT SULEIMENOV.docx"
-# resume_text = file_to_text(file_path)
-resume_text = text[0]
+resume_text = file_to_text(PATH_TO_FILE)
+#resume_text = text[0]
 
 resume_blocks = split_resume_into_blocks(resume_text, keywords)
 for i in resume_blocks.keys():
@@ -108,6 +150,7 @@ print("Remaining Text: ", remaining_text)
 # with open('resume_texts_without_lowercase.json', 'w', encoding='utf-8') as json_file:
 #     json.dump(resume_texts, json_file, ensure_ascii=False, indent=4)
 #     print("JSON файл успешно сохранен.")
+print(resume_text)
 
 #_____________________________________________________________________________________________________________________
 dicta = {
