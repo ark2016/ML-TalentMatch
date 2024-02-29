@@ -182,6 +182,7 @@ model = AutoModelForQuestionAnswering.from_pretrained("Kiet/autotrain-resume_par
 dicta['resume']["resume_id"] = pipe("resume_id", resume_text)['answer']
 
 FullName = pipe("what is my name", resume_text)['answer']
+print("Full Name: ", FullName)
 names = ["first_name", "last_name", "middle_name"]
 i = 0
 for name in FullName.split():
@@ -189,53 +190,72 @@ for name in FullName.split():
     i += 1
 
 birth_date = pipe("birth_date", resume_text)['answer']
+print("birth date: ", birth_date)
 dicta['resume']["birth_date"] = birth_date
 
 dicta['resume']["birth_date_year_only"] = (birth_date==True)
 
 homeland = pipe("homeland", resume_text)['answer']
+print("homeland: ", homeland)
 dicta['resume']["country"] = homeland
 
 hometown = pipe("hometown", resume_text)['answer']
+print("hometown: ", hometown)
 dicta['resume']["city"] = hometown
 
 about = pipe("describe me", resume_text)['answer']
+print("about: ", about)
 dicta['resume']["about"] = about
 
 key_skills = pipe("tell me key skills", resume_text)['answer']
+print("key_skills: ", key_skills)
 dicta['resume']["key_skills"] = key_skills
 
 dicta['resume']["language"] = detect(resume_text)
+print("language: ", dicta['resume']["language"])
 
 organization = pipe("place of education", resume_text)['answer']
+print("organization: ", organization)
 dicta['resume']['educationItems'][0]["organization"] = organization
 
 faculty = pipe("faculty of education", resume_text)['answer']
+print("faculty: ", faculty)
 dicta['resume']['educationItems'][0]["faculty"] = faculty
 
 specialty = pipe("specialty of education", resume_text)['answer']
+print("specialty: ", specialty)
 dicta['resume']['educationItems'][0]["specialty"] = specialty
 
 result = pipe("result of education", resume_text)['answer']
+print("result: ", result)
 dicta['resume']['educationItems'][0]["result"] = result
 
 education_type = pipe("type of education", resume_text)['answer']
+print("education_type: ", education_type)
 dicta['resume']['educationItems'][0]["education_type"] = education_type
 
 education_level = pipe("level of education", resume_text)['answer']
+print("education_level: ", education_level)
 dicta['resume']['educationItems'][0]["education_level"] = education_type
 
 starts = pipe("start of work", resume_text )['answer']
+print("starts: ", starts)
 dicta['resume']['experienceItems'][0]["starts"] = starts
 
 ends = pipe("end of work", resume_text )['answer']
+print("ends: ", ends)
 dicta['resume']['experienceItems'][0]["ends"] = ends
 
 employer = pipe("place of work", resume_text )['answer']
+print("employer: ", employer)
 dicta['resume']['experienceItems'][0]["employer"] = employer
 
 city = pipe("city of work", resume_text )['answer']
+print("city: ", city)
 dicta['resume']['experienceItems'][0]["city"] = city
 
 position = pipe("position at work", resume_text )['answer']
+print("position: ", position)
 dicta['resume']['experienceItems'][0]["position"] = position
+
+print(dicta)
