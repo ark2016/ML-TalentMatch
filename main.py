@@ -303,3 +303,9 @@ dicta['resume']['experienceItems'][0]["position"] = position
 dicta = extract_contacts(PATH_TO_FILE, dicta)
 
 print(dicta)
+
+file_path = "output/res.json"
+
+# Запись словаря в JSON файл
+with open(file_path, "w") as json_file:
+    json.dump(dicta, json_file, ensure_ascii=False, indent=4)
